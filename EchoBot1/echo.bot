@@ -1,0 +1,18 @@
+{
+    "name": "echo",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "id": "a410fb60-70a2-11e9-99ac-e73e44e67b3b",
+            "name": "http://localhost:3978/api/messages"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "overrides": null,
+    "path": "C:\\Users\\Osric Wilkinson\\source\\repos\\EchoBot1\\EchoBot1\\echo.bot"
+}
