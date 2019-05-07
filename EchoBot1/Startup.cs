@@ -37,7 +37,6 @@ namespace EchoBot1
             services.AddSingleton<IBotFrameworkHttpAdapter, BotFrameworkHttpAdapter>();
 
             services.AddSingleton<IStorage, MemoryStorage>();
-            services.AddSingleton<UserState>();
             services.AddSingleton<ConversationState>();
 
          

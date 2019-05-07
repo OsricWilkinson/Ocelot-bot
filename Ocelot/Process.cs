@@ -19,9 +19,7 @@ namespace Ocelot
             dynamic json = JObject.Parse(File.ReadAllText(path));
 
             foreach (var s in json["flow"])
-            {
-
-             
+            {             
                 Stanza next = null;
 
                 switch (s.Value["type"].Value)
@@ -104,9 +102,9 @@ namespace Ocelot
             return flow[id];
         }
 
-        public Phrase GetPhrase(int id)
+        public Phrase GetPhrase(long id)
         {
-            return phrases[id];
+            return phrases[(int)id];
         }
 
     }

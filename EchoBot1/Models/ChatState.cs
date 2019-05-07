@@ -7,8 +7,7 @@ namespace EchoBot1.Models
 {
     public class ChatState
     {
-        public string LatestID { get; set; }
+        public string CurrentStanzaID { get; set; }
 
-        public string Name { get; set; }
     }
 }
