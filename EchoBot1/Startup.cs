@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using EchoBot1.Bots;
+using EchoBot1.Dialogs;
 
 namespace EchoBot1
 {
@@ -38,10 +39,10 @@ namespace EchoBot1
 
             services.AddSingleton<IStorage, MemoryStorage>();
             services.AddSingleton<ConversationState>();
-
-         
+            services.AddSingleton<OuterDialog>();
+            
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, DialogBot>();
+            services.AddTransient<IBot, DialogBot<OuterDialog>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
