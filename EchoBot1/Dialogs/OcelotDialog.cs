@@ -14,7 +14,7 @@ namespace EchoBot1.Dialogs
     {
         private const string DoneKey = "value-done";
         private const string StateKey = "value-state";
-        private readonly Process proc;
+        private readonly Ocelot.Process proc;
 
         public OcelotDialog() : base(nameof(OcelotDialog))
         {
@@ -62,11 +62,11 @@ namespace EchoBot1.Dialogs
             if (!current.HasNext)
             {
                 stepContext.Values[DoneKey] = true;
+                state.CurrentStanzaID = null;
             }
 
-            var o2 = new string[] { "Uhhh..." };
 
-            return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = ChoiceFactory.ToChoices(o2)};
+            return new PromptOptions { Prompt = MessageFactory.Text(text)};
         }
 
         private async Task<DialogTurnResult> ChoiceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
