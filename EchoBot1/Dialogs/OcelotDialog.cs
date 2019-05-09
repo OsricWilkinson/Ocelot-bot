@@ -4,6 +4,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Ocelot;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +21,10 @@ namespace EchoBot1.Dialogs
         {
             proc = Ocelot.Storage.LoadProcess();
 
-            AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
+            var cp = new ChoicePrompt(nameof(ChoicePrompt));
+            cp.Style = ListStyle.HeroCard;
+
+            AddDialog(cp);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[] {
                 ChoiceStepAsync,
                 LoopStepAsync,
@@ -59,8 +63,10 @@ namespace EchoBot1.Dialogs
 
                 for (int i =0; i < qs.Answers.Length; i +=1 )
                 {
-                    var choice = new Choice();
-                    choice.Value = proc.GetPhrase(qs.Answers[i]).Internal;
+                    var choice = new Choice
+                    {
+                        Value = proc.GetPhrase(qs.Answers[i]).Internal
+                    };
                     if (choice.Value.ToLower().StartsWith("yes"))
                     {
                         choice.Synonyms = new List<string>{ "yes", "yup", "y" };
@@ -73,13 +79,13 @@ namespace EchoBot1.Dialogs
 
                 return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = choices.ToArray() };
             }
-            if (!current.HasNext)
+
+            if (!current.HasNext || current.Next[0] == "end")
             {
                 stepContext.Values[DoneKey] = true;
             }
 
-
-            return new PromptOptions { Prompt = MessageFactory.Text(text)};
+            return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = ChoiceFactory.ToChoices(new string[] { "OK" })};
         }
 
         private async Task<DialogTurnResult> ChoiceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -100,8 +106,11 @@ namespace EchoBot1.Dialogs
             var done = stepContext.Values.ContainsKey(DoneKey);
             var state = stepContext.Values[StateKey] as ChatState;
 
+            Debug.Print("Done state is {0}\n", done);
+
             if (!done)
             {
+                Debug.Print("Not done\n");
                 QuestionStanza qs = proc.GetStanza(state.CurrentStanzaID) as QuestionStanza;
                 for (int i =0; i < qs.Answers.Length; i += 1)
                 {
@@ -115,6 +124,7 @@ namespace EchoBot1.Dialogs
             }
             else
             {
+                Debug.Print("Really done\n");
                 stepContext.Values[StateKey] = null; 
                 return await stepContext.EndDialogAsync(state, cancellationToken);
             }
