@@ -62,7 +62,6 @@ namespace EchoBot1.Dialogs
             if (!current.HasNext)
             {
                 stepContext.Values[DoneKey] = true;
-                state.CurrentStanzaID = null;
             }
 
 
@@ -102,6 +101,7 @@ namespace EchoBot1.Dialogs
             }
             else
             {
+                stepContext.Values[StateKey] = null; 
                 return await stepContext.EndDialogAsync(state, cancellationToken);
             }
         }
