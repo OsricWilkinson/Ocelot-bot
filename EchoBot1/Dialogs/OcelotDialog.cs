@@ -54,10 +54,24 @@ namespace EchoBot1.Dialogs
             if (current.StanzaType == "Question")
             {
                 QuestionStanza qs = (QuestionStanza)current;
-                var options = new List<string>();
-                options.AddRange(qs.Answers.Select(n => proc.GetPhrase(n).Internal).ToArray());
 
-                return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = ChoiceFactory.ToChoices(options) };
+                IList<Choice> choices = new List<Choice>();
+
+                for (int i =0; i < qs.Answers.Length; i +=1 )
+                {
+                    var choice = new Choice();
+                    choice.Value = proc.GetPhrase(qs.Answers[i]).Internal;
+                    if (choice.Value.ToLower().StartsWith("yes"))
+                    {
+                        choice.Synonyms = new List<string>{ "yes", "yup", "y" };
+                    } else if (choice.Value.ToLower().StartsWith("no"))
+                    {
+                        choice.Synonyms = new List<string> { "no", "nope", "n" };
+                    }
+                    choices.Add(choice);
+                }
+
+                return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = choices.ToArray() };
             }
             if (!current.HasNext)
             {
