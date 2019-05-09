@@ -4,6 +4,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Ocelot;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,13 +15,16 @@ namespace EchoBot1.Dialogs
     {
         private const string DoneKey = "value-done";
         private const string StateKey = "value-state";
-        private readonly Process proc;
+        private readonly Ocelot.Process proc;
 
         public OcelotDialog() : base(nameof(OcelotDialog))
         {
             proc = Ocelot.Storage.LoadProcess();
 
-            AddDialog(new ChoicePrompt(nameof(ChoicePrompt)));
+            var cp = new ChoicePrompt(nameof(ChoicePrompt));
+            cp.Style = ListStyle.HeroCard;
+
+            AddDialog(cp);
             AddDialog(new WaterfallDialog(nameof(WaterfallDialog), new WaterfallStep[] {
                 ChoiceStepAsync,
                 LoopStepAsync,
@@ -54,19 +58,34 @@ namespace EchoBot1.Dialogs
             if (current.StanzaType == "Question")
             {
                 QuestionStanza qs = (QuestionStanza)current;
-                var options = new List<string>();
-                options.AddRange(qs.Answers.Select(n => proc.GetPhrase(n).Internal).ToArray());
 
-                return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = ChoiceFactory.ToChoices(options) };
+                IList<Choice> choices = new List<Choice>();
+
+                for (int i =0; i < qs.Answers.Length; i +=1 )
+                {
+                    var choice = new Choice
+                    {
+                        Value = proc.GetPhrase(qs.Answers[i]).Internal
+                    };
+                    if (choice.Value.ToLower().StartsWith("yes"))
+                    {
+                        choice.Synonyms = new List<string>{ "yes", "yup", "y" };
+                    } else if (choice.Value.ToLower().StartsWith("no"))
+                    {
+                        choice.Synonyms = new List<string> { "no", "nope", "n" };
+                    }
+                    choices.Add(choice);
+                }
+
+                return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = choices.ToArray() };
             }
-            if (!current.HasNext)
+
+            if (!current.HasNext || current.Next[0] == "end")
             {
                 stepContext.Values[DoneKey] = true;
             }
 
-            var o2 = new string[] { "Uhhh..." };
-
-            return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = ChoiceFactory.ToChoices(o2)};
+            return new PromptOptions { Prompt = MessageFactory.Text(text), Choices = ChoiceFactory.ToChoices(new string[] { "OK" })};
         }
 
         private async Task<DialogTurnResult> ChoiceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -87,8 +106,11 @@ namespace EchoBot1.Dialogs
             var done = stepContext.Values.ContainsKey(DoneKey);
             var state = stepContext.Values[StateKey] as ChatState;
 
+            Debug.Print("Done state is {0}\n", done);
+
             if (!done)
             {
+                Debug.Print("Not done\n");
                 QuestionStanza qs = proc.GetStanza(state.CurrentStanzaID) as QuestionStanza;
                 for (int i =0; i < qs.Answers.Length; i += 1)
                 {
@@ -102,6 +124,8 @@ namespace EchoBot1.Dialogs
             }
             else
             {
+                Debug.Print("Really done\n");
+                stepContext.Values[StateKey] = null; 
                 return await stepContext.EndDialogAsync(state, cancellationToken);
             }
         }

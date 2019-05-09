@@ -1,4 +1,4 @@
-{
+ï»¿{
   "meta": {
     "title": "Customer wants to make a cup of tea",
     "id": "oct90001",
@@ -159,16 +159,16 @@
     "No - they do not have a tea bag",
     [ "Ask the customer if they have a cup", "Do you have a cup?" ],
     "yes - they do have a cup ",
-    "no - they don’t have a cup",
+    "no - they donï¿½t have a cup",
     [ "Ask the customer if they have water to fill the kettle", "Do you have water to fill your kettle?" ],
     "yes - they have water to fill the kettle",
-    "no - they don’t have water to fill the kettle",
+    "no - they donï¿½t have water to fill the kettle",
     [ "Tell the customer to turn the kettle on", "Turn your kettle on" ],
     [ "Tell the customer to wait up to 5 minutes for the water to boil", "Wait up to 5 minutes for the water to boil" ],
     "The water in the kettle may be very hot",
     [ "Ask the customer if the water has boiled", "Has the water boiled" ],
     "yes - the water has boiled ",
-    "no - the water hasn’t boiled",
+    "no - the water hasnï¿½t boiled",
     [ "Tell the customer to add the tea bag to the cup", "Add the tea bag to the cup" ],
     [ "Tell the customer to pour the water from the kettle into the cup", "Pour the water from the kettle into the cup" ],
     [ "Tell the customer to wait 2 minutes for the tea to steep into the water", "Wait 2 minutes for the tea to steep into the water" ],
