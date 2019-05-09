@@ -1,10 +1,15 @@
-﻿namespace Ocelot
+﻿using System.IO;
+using System.Reflection;
+
+namespace Ocelot
 {
     public class Storage
     {
         public static Process LoadProcess()
         {
-            return new Process(@"C:\Users\Osric Wilkinson\source\repos\EchoBot1\Ocelot\Resources\oct90001.json");
+
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"..\..\..\Resources\oct90001.json");
+            return new Process(path);
         }
     }
 }
