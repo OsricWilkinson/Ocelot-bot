@@ -26,7 +26,7 @@ namespace EchoBot1.Bots
 
 
 
-        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default)
+        public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
             await base.OnTurnAsync(turnContext, cancellationToken);
 
